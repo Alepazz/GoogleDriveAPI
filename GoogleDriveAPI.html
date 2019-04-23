@@ -1,14 +1,12 @@
 <html>
 <!-- link -->
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-<link rel="stylesheet" type="text/css" href="Css/TestAPIGoogle.css">
+<link rel="stylesheet" type="text/css" href="Css/GoogleDriveAPI.css">
 
 <!-- script -->
 <script src="https://apis.google.com/js/api.js"></script>
-<script type ="text/javascript" src = "Js/TestAPIGoogle.js" ></script>
-<link rel="stylesheet" href="Script/jquery.datetimepicker.min.css">
+<script type ="text/javascript" src = "JS/GoogleDriveAPI.js" ></script>
 <script src="Script/jquery.js"></script>
-<script src="Script/jquery.datetimepicker.full.js"></script>
 
 <!-- meta --> <!-- content="YOUR_CLIENT_ID"-->
 <meta name="google-signin-scope" content="profile email">
@@ -33,6 +31,9 @@
 
         <a href="#" onclick="signOut();">Sign out</a>
 
+        <button onclick="authenticate()" style="background-color: #bdc3c7">Load Calendar's informations</button>
+
     </div>
 </body>
 </html>
+
