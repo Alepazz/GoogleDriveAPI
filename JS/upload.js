@@ -6,7 +6,7 @@ $(document).ready(function(){
     const redirect_uri = "http://localhost:8000/GoogleDriveAPI/GoogleDriveAPI/upload.html" // replace with your redirect_uri;
     const client_secret = "KWkF0C8b8s-E9dUdQRzH0DxD"; // replace with your client secret
     const scope = "https://www.googleapis.com/auth/drive";
-    var access_token= "";
+    //var access_token= "";
     var client_id = "86585982831-phu06i802oadavv41ak0tgh8vd00jbpu.apps.googleusercontent.com"// replace it with your client id;
     
 
@@ -21,16 +21,10 @@ $(document).ready(function(){
         grant_type:"authorization_code"},
         dataType: "json",
         success: function(resultData) {
-           
-            
            localStorage.setItem("accessToken",resultData.access_token);
            localStorage.setItem("refreshToken",resultData.refreshToken);
            localStorage.setItem("expires_in",resultData.expires_in);
-           window.history.pushState({}, document.title, "/GitLoginApp/" + "upload.html");
-           
-           
-           
-           
+           window.history.pushState({}, document.title, "/GitLoginApp/" + "upload.html");           
         }
   });
 
