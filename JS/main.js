@@ -27,6 +27,11 @@ $(document).ready(function(){
 
     });
 
+    /*
+    * How signin with Google works: https://developers.google.com/identity/sign-in/web/server-side-flow
+    * How authentication with Google works: https://developers.google.com/identity/protocols/OpenIDConnect#sendauthrequest
+    * You can check for this line ("Here is an example of a complete OpenID Connect authentication URI") to see how the url is composed
+    */
     function signIn(clientId,redirect_uri,scope,url){
      
        // the actual url to which the user is redirected to 
