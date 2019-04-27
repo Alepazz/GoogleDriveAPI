@@ -2,11 +2,13 @@
 <!-- link -->
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <link rel="stylesheet" type="text/css" href="Css/GoogleDriveAPI.css">
+<link rel="stylesheet" type="text/css" media="screen" href="Css/upload.css" />
 
 <!-- script -->
 <script src="https://apis.google.com/js/api.js"></script>
 <script type ="text/javascript" src = "JS/GoogleDriveAPI.js" ></script>
 <script src="Script/jquery.js"></script>
+<script src="JS/upload.js"></script>
 
 <!-- meta --> <!-- content="YOUR_CLIENT_ID"-->
 <meta name="google-signin-scope" content="profile email">
@@ -26,12 +28,24 @@
         </div>
     </nav>
 
+    <div>
+      <input id="files" type="file" name="files[]" multiple/>
+      <button id="upload">Upload</button>
+      <div id="progress-wrp">
+         <div class="progress-bar"></div>
+         <div class="status">0%</div>
+     </div>
+    </div> 
+    <div id="result">
+        
+    </div>
+
     <div class="col-2">  
         <div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></div>
 
         <a href="#" onclick="signOut();">Sign out</a>
 
-        <button onclick="authenticate()" style="background-color: #bdc3c7">Load Calendar's informations</button>
+     <!-- <button onclick="authenticate()" style="background-color: #bdc3c7">Load Calendar's informations</button> -->
 
     </div>
 </body>

@@ -1,36 +1,42 @@
 $(document).ready(function(){
     
-
     const urlParams = new URLSearchParams(window.location.search);
+    console.log("Window location", window.location.search); //Window location: ?code=4/OQEvgjz6dGx6M3bV3nkVCl6wOsVlYjWGApz70P97eojsolaBwm4WnwhIxVtHxuvTvyhRwF4MFzxfOVbdAHbhB2w&scope=https://www.googleapis.com/auth/drive
     const code = urlParams.get('code');
+    console.log("code", code);
     const redirect_uri = "http://localhost:8000/GoogleDriveAPI/GoogleDriveAPI/upload.html" // replace with your redirect_uri;
     const client_secret = "KWkF0C8b8s-E9dUdQRzH0DxD"; // replace with your client secret
     const scope = "https://www.googleapis.com/auth/drive";
     //var access_token= "";
     var client_id = "86585982831-phu06i802oadavv41ak0tgh8vd00jbpu.apps.googleusercontent.com"// replace it with your client id;
     
-
-    $.ajax({
+    /*
+    * Sito per verificare i parametri da passare a data: https://developers.google.com/identity/protocols/OpenIDConnect
+    */
+   $.ajax({
         type: 'POST',
-        url: "https://www.googleapis.com/oauth2/v4/token",
-        data: {code:code
-            ,redirect_uri:redirect_uri,
+        url: "https://www.googleapis.com/oauth2/v4/token", //token endpoint
+        data: {code:code //The authorization code that is returned from the initial request.
+            ,redirect_uri:redirect_uri, //The URI that you specify in the API Console
             client_secret:client_secret,
         client_id:client_id,
         scope:scope,
         grant_type:"authorization_code"},
         dataType: "json",
-        success: function(resultData) {
-           localStorage.setItem("accessToken",resultData.access_token);
-           localStorage.setItem("refreshToken",resultData.refreshToken);
-           localStorage.setItem("expires_in",resultData.expires_in);
-           window.history.pushState({}, document.title, "/GitLoginApp/" + "upload.html");           
+        success: function(resultData) { /*resultData is a Json Array with the following fields (search for line
+            *"A successful response to this request contains the following fields in a JSON array" in this link: https://developers.google.com/identity/protocols/OpenIDConnect)
+            */
+           console.log(resultData);
+           localStorage.setItem("accessToken",resultData.access_token); //A token that can be sent to a Google API.
+           localStorage.setItem("refreshToken",resultData.refreshToken); //This field is only present if access_type=offline is included in the authentication request. --> A refresh token provides your app continuous access to Google APIs while the user is not logged into your application. To request a refresh token, add access_type=offline to the authentication request.
+           localStorage.setItem("expires_in",resultData.expires_in); //The remaining lifetime of the access token.
+           window.history.pushState({}, document.title, "upload.html"); //change the site bar name. Before the change it was: http://localhost:8000/GoogleDriveAPI/GoogleDriveAPI/upload.html?code=4/OQGsDWg4-sWTGfTdytrNlYOHvwEuy97kfUNvpaAUcTX0BrHjQANmH4eUs4ITwNB3T-XDaR7f_mBUwT2TlA3A6KQ&scope=https://www.googleapis.com/auth/drive         
         }
   });
 
-    function stripQueryStringAndHashFromPath(url) {
+   /* function stripQueryStringAndHashFromPath(url) {
         return url.split("?")[0].split("#")[0];
-    }   
+    }  */  
 
     var Upload = function (file) {
         this.file = file;
