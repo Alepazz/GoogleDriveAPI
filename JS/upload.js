@@ -11,11 +11,11 @@ $(document).ready(function(){
     var client_id = "86585982831-phu06i802oadavv41ak0tgh8vd00jbpu.apps.googleusercontent.com"// replace it with your client id;
     
     /*
-    * Sito per verificare i parametri da passare a data: https://developers.google.com/identity/protocols/OpenIDConnect
+    * Sito per verificare i parametri da passare al campo "data": https://developers.google.com/identity/protocols/OpenIDConnect
     */
    $.ajax({
         type: 'POST',
-        url: "https://www.googleapis.com/oauth2/v4/token", //token endpoint
+        url: "https://www.googleapis.com/oauth2/v4/token", //token endpoint..the target of the request
         data: {code:code //The authorization code that is returned from the initial request.
             ,redirect_uri:redirect_uri, //The URI that you specify in the API Console
             client_secret:client_secret,
@@ -28,7 +28,8 @@ $(document).ready(function(){
             */
            console.log(resultData);
            localStorage.setItem("accessToken",resultData.access_token); //A token that can be sent to a Google API.
-           localStorage.setItem("refreshToken",resultData.refreshToken); //This field is only present if access_type=offline is included in the authentication request. --> A refresh token provides your app continuous access to Google APIs while the user is not logged into your application. To request a refresh token, add access_type=offline to the authentication request.
+           localStorage.setItem("refreshToken",resultData.refresh_token); //This field is only present if access_type=offline is included in the authentication request. --> A refresh token provides your app continuous access to Google APIs while the user is not logged into your application. To request a refresh token, add access_type=offline to the authentication request.
+           //console.log("token type", resultData.token_type);
            localStorage.setItem("expires_in",resultData.expires_in); //The remaining lifetime of the access token.
            window.history.pushState({}, document.title, "upload.html"); //change the site bar name. Before the change it was: http://localhost:8000/GoogleDriveAPI/GoogleDriveAPI/upload.html?code=4/OQGsDWg4-sWTGfTdytrNlYOHvwEuy97kfUNvpaAUcTX0BrHjQANmH4eUs4ITwNB3T-XDaR7f_mBUwT2TlA3A6KQ&scope=https://www.googleapis.com/auth/drive         
         }
@@ -51,6 +52,7 @@ $(document).ready(function(){
         return this.file.size;
     };
     Upload.prototype.getName = function() {
+        console.log("file name", this.file.name);
         return this.file.name;
     };
     Upload.prototype.doUpload = function () {

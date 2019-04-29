@@ -35,13 +35,14 @@ $(document).ready(function(){
     function signIn(clientId,redirect_uri,scope,url){
      
        // the actual url to which the user is redirected to 
+       // the parameters of the request can be read here: https://developers.google.com/identity/protocols/OpenIDConnect#authenticationuriparameters
 
        url = "https://accounts.google.com/o/oauth2/v2/auth?redirect_uri="+redirect_uri
        +"&prompt=consent&response_type=code&client_id="+clientId+"&scope="+scope
        +"&access_type=offline";
 
        // this line makes the user redirected to the url
-
+       //The Window.location read-only property returns a Location object with information about the current location of the document.
        window.location = url;
 
 
