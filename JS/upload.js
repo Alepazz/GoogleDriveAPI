@@ -28,9 +28,9 @@ $(document).ready(function(){
             */
            console.log(resultData);
            localStorage.setItem("accessToken",resultData.access_token); //A token that can be sent to a Google API.
-           localStorage.setItem("refreshToken",resultData.refresh_token); //This field is only present if access_type=offline is included in the authentication request. --> A refresh token provides your app continuous access to Google APIs while the user is not logged into your application. To request a refresh token, add access_type=offline to the authentication request.
+           //localStorage.setItem("refreshToken",resultData.refresh_token); //This field is only present if access_type=offline is included in the authentication request. --> A refresh token provides your app continuous access to Google APIs while the user is not logged into your application. To request a refresh token, add access_type=offline to the authentication request.
            //console.log("token type", resultData.token_type);
-           localStorage.setItem("expires_in",resultData.expires_in); //The remaining lifetime of the access token.
+           //localStorage.setItem("expires_in",resultData.expires_in); //The remaining lifetime of the access token.
            window.history.pushState({}, document.title, "upload.html"); //change the site bar name. Before the change it was: http://localhost:8000/GoogleDriveAPI/GoogleDriveAPI/upload.html?code=4/OQGsDWg4-sWTGfTdytrNlYOHvwEuy97kfUNvpaAUcTX0BrHjQANmH4eUs4ITwNB3T-XDaR7f_mBUwT2TlA3A6KQ&scope=https://www.googleapis.com/auth/drive         
         }
   });
@@ -43,7 +43,7 @@ $(document).ready(function(){
         this.file = file;
     };
     
-    Upload.prototype.getType = function() {
+  /*  Upload.prototype.getType = function() {
         localStorage.setItem("type",this.file.type);
         return this.file.type;
     };
@@ -51,16 +51,21 @@ $(document).ready(function(){
         localStorage.setItem("size",this.file.size);
         return this.file.size;
     };
+    */
+
+    //Upload.prototype.newProperty è utile per far ereditare newProperty ai figli (oggetti costruiti a partire dal costruttore Upload)
     Upload.prototype.getName = function() {
-        console.log("file name", this.file.name);
         return this.file.name;
     };
+    
     Upload.prototype.doUpload = function () {
         var that = this;
-        var formData = new FormData();
+        var formData = new FormData(); //key-value map
+        this.file.title = "prova.txt";
     
         // add assoc key values, this will be posts values
-        formData.append("file", this.file, this.getName());
+        formData.append("file", this.file); //insert in "file" all the metadata about the file
+        //console.log(formData.get("file").name); print the file name
         formData.append("upload_file", true);
     
         $.ajax({
@@ -71,7 +76,8 @@ $(document).ready(function(){
             },
             url: "https://www.googleapis.com/upload/drive/v2/files",
             data:{
-                uploadType:"media"
+                uploadType:"media",
+                title: "prova.txt"
             },
             xhr: function () {
                 var myXhr = $.ajaxSettings.xhr();
