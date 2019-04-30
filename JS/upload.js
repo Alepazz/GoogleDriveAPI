@@ -9,11 +9,11 @@ $(document).ready(function(){
     const scope = "https://www.googleapis.com/auth/drive";
     //var access_token= "";
     var client_id = "86585982831-phu06i802oadavv41ak0tgh8vd00jbpu.apps.googleusercontent.com"// replace it with your client id;
-    
+
     /*
     * Sito per verificare i parametri da passare al campo "data": https://developers.google.com/identity/protocols/OpenIDConnect
     */
-   $.ajax({
+    $.ajax({
         type: 'POST',
         method: 'POST', //da testare
         url: "https://www.googleapis.com/oauth2/v4/token", //token endpoint..the target of the request
@@ -28,62 +28,50 @@ $(document).ready(function(){
         success: function(resultData) { /*resultData is a Json Array with the following fields (search for line
             *"A successful response to this request contains the following fields in a JSON array" in this link: https://developers.google.com/identity/protocols/OpenIDConnect)
             */
-           console.log(resultData);
-           localStorage.setItem("accessToken",resultData.access_token); //A token that can be sent to a Google API.
-           //localStorage.setItem("refreshToken",resultData.refresh_token); //This field is only present if access_type=offline is included in the authentication request. --> A refresh token provides your app continuous access to Google APIs while the user is not logged into your application. To request a refresh token, add access_type=offline to the authentication request.
-           //console.log("token type", resultData.token_type);
-           //localStorage.setItem("expires_in",resultData.expires_in); //The remaining lifetime of the access token.
-           window.history.pushState({}, document.title, "upload.html"); //change the site bar name. Before the change it was: http://localhost:8000/GoogleDriveAPI/GoogleDriveAPI/upload.html?code=4/OQGsDWg4-sWTGfTdytrNlYOHvwEuy97kfUNvpaAUcTX0BrHjQANmH4eUs4ITwNB3T-XDaR7f_mBUwT2TlA3A6KQ&scope=https://www.googleapis.com/auth/drive         
+            console.log(resultData);
+            localStorage.setItem("accessToken",resultData.access_token); //A token that can be sent to a Google API.
+            //localStorage.setItem("refreshToken",resultData.refresh_token); //This field is only present if access_type=offline is included in the authentication request. --> A refresh token provides your app continuous access to Google APIs while the user is not logged into your application. To request a refresh token, add access_type=offline to the authentication request.
+            //console.log("token type", resultData.token_type);
+            //localStorage.setItem("expires_in",resultData.expires_in); //The remaining lifetime of the access token.
+            window.history.pushState({}, document.title, "upload.html"); //change the site bar name. Before the change it was: http://localhost:8000/GoogleDriveAPI/GoogleDriveAPI/upload.html?code=4/OQGsDWg4-sWTGfTdytrNlYOHvwEuy97kfUNvpaAUcTX0BrHjQANmH4eUs4ITwNB3T-XDaR7f_mBUwT2TlA3A6KQ&scope=https://www.googleapis.com/auth/drive         
         }
-  });
-
-   /* function stripQueryStringAndHashFromPath(url) {
-        return url.split("?")[0].split("#")[0];
-    }  */  
+    });
 
     var Upload = function (file) {
         this.file = file;
     };
-    
-  /*  Upload.prototype.getType = function() {
-        localStorage.setItem("type",this.file.type);
-        return this.file.type;
-    };
-    Upload.prototype.getSize = function() {
-        localStorage.setItem("size",this.file.size);
-        return this.file.size;
-    };
-    */
 
     //Upload.prototype.newProperty è utile per far ereditare newProperty ai figli (oggetti costruiti a partire dal costruttore Upload)
     Upload.prototype.getName = function() {
         return this.file.name;
     };
     
-  /*  Upload.prototype.doUpload = function () {
+    Upload.prototype.doUpload = function () {
         var that = this;
         var formData = new FormData(); //key-value map
     
         // add assoc key values, this will be posts values
-        formData.append("file", this.file); //insert in "file" all the metadata about the file
+        formData.append("file", this.file, "prova.txt"); //insert in "file" all the metadata about the file
         //console.log(formData.get("file").name); print the file name
-        formData.append("upload_file", true);
-        //formData.append("mimeType", "image/png");
-
-    
-    
-        /*$.ajax({
+        //formData.append("upload_file", true);
+        console.log(this.file.name);
+        
+        $.ajax({
             type: "POST",
+            enctype: 'multipart/form-data',
             beforeSend: function(request) {
                 request.setRequestHeader("Authorization", "Bearer" + " " + localStorage.getItem("accessToken"));
-                request.setRequestHeader("Content-Type", "multipart/related; boundary=foo_bar_baz");
+                //request.setRequestHeader("Content-Type", "multipart/related; boundary=foo_bar_baz");
                 
             },
-            url: "https://www.googleapis.com/upload/drive/v2/files?uploadType=multipart",
-            data:{
-                title: "prova.txt"
-            },
+            url: "https://www.googleapis.com/upload/drive/v2/files",
             data: formData,
+            async: true,
+            //data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            timeout: 60000,
             xhr: function () {
                 var myXhr = $.ajaxSettings.xhr();
                 if (myXhr.upload) {
@@ -96,57 +84,52 @@ $(document).ready(function(){
             },
             error: function (error) {
                 console.log(error);
-            },
-            async: true,
-            cache: false,
-            contentType: false,
-            processData: false,
-            timeout: 60000
+            }        
         });
-    };*/
+    };
 
-    function insertFile(fileData, callback) {
+  /* function insertFile(fileData, callback) {
         const boundary = '-------314159265358979323846';
         const delimiter = "\r\n--" + boundary + "\r\n";
         const close_delim = "\r\n--" + boundary + "--";
-      
+        
         var reader = new FileReader();
         reader.readAsBinaryString(fileData);
         reader.onload = function(e) {
-          var contentType = fileData.type || 'application/octet-stream';
-          var metadata = {
+            var contentType = fileData.type || 'application/octet-stream';
+            var metadata = {
             'title': fileData.fileName,
             'mimeType': contentType
-          };
-      
-          var base64Data = btoa(reader.result);
-          var multipartRequestBody =
-              delimiter +
-              'Content-Type: application/json\r\n\r\n' +
-              JSON.stringify(metadata) +
-              delimiter +
-              'Content-Type: ' + contentType + '\r\n' +
-              'Content-Transfer-Encoding: base64\r\n' +
-              '\r\n' +
-              base64Data +
-              close_delim;
-      
-          var request = gapi.client.request({
-              'path': '/upload/drive/v2/files',
-              'method': 'POST',
-              'params': {'uploadType': 'multipart'},
-              'headers': {
-                'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
-              },
-              'body': multipartRequestBody});
-          if (!callback) {
-            callback = function(file) {
-              console.log(file)
             };
-          }
-          request.execute(callback);
+        
+            var base64Data = btoa(reader.result);
+            var multipartRequestBody =
+                delimiter +
+                'Content-Type: application/json\r\n\r\n' +
+                JSON.stringify(metadata) +
+                delimiter +
+                'Content-Type: ' + contentType + '\r\n' +
+                'Content-Transfer-Encoding: base64\r\n' +
+                '\r\n' +
+                base64Data +
+                close_delim;
+        
+            var request = gapi.client.request({
+                'path': '/upload/drive/v2/files',
+                'method': 'POST',
+                'params': {'uploadType': 'multipart'},
+                'headers': {
+                'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
+                },
+                'body': multipartRequestBody});
+            if (!callback) {
+            callback = function(file) {
+                console.log(file)
+            };
+            }
+            request.execute(callback);
         }
-}
+    }*/
     
     Upload.prototype.progressHandling = function (event) {
         var percent = 0;
@@ -165,12 +148,12 @@ $(document).ready(function(){
         var file = $("#files")[0].files[0];
         var upload = new Upload(file);
 
-        insertFile(file);
+        //insertFile(file);
     
         // maby check size or type here with upload.getSize() and upload.getType()
     
         // execute upload
-        //upload.doUpload();
+        upload.doUpload();
     });
 
 
