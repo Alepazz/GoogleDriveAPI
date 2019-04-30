@@ -15,14 +15,16 @@ $(document).ready(function(){
     */
    $.ajax({
         type: 'POST',
+        method: 'POST', //da testare
         url: "https://www.googleapis.com/oauth2/v4/token", //token endpoint..the target of the request
-        data: {code:code //The authorization code that is returned from the initial request.
-            ,redirect_uri:redirect_uri, //The URI that you specify in the API Console
-            client_secret:client_secret,
+        data: {
+        code:code, //The authorization code that is returned from the initial request.
+        redirect_uri:redirect_uri, //The URI that you specify in the API Console
+        client_secret:client_secret,
         client_id:client_id,
         scope:scope,
         grant_type:"authorization_code"},
-        dataType: "json",
+        dataType: "json", //risposta
         success: function(resultData) { /*resultData is a Json Array with the following fields (search for line
             *"A successful response to this request contains the following fields in a JSON array" in this link: https://developers.google.com/identity/protocols/OpenIDConnect)
             */
@@ -58,27 +60,30 @@ $(document).ready(function(){
         return this.file.name;
     };
     
-    Upload.prototype.doUpload = function () {
+  /*  Upload.prototype.doUpload = function () {
         var that = this;
         var formData = new FormData(); //key-value map
-        this.file.title = "prova.txt";
     
         // add assoc key values, this will be posts values
         formData.append("file", this.file); //insert in "file" all the metadata about the file
         //console.log(formData.get("file").name); print the file name
         formData.append("upload_file", true);
+        //formData.append("mimeType", "image/png");
+
     
-        $.ajax({
+    
+        /*$.ajax({
             type: "POST",
             beforeSend: function(request) {
                 request.setRequestHeader("Authorization", "Bearer" + " " + localStorage.getItem("accessToken"));
+                request.setRequestHeader("Content-Type", "multipart/related; boundary=foo_bar_baz");
                 
             },
-            url: "https://www.googleapis.com/upload/drive/v2/files",
+            url: "https://www.googleapis.com/upload/drive/v2/files?uploadType=multipart",
             data:{
-                uploadType:"media",
                 title: "prova.txt"
             },
+            data: formData,
             xhr: function () {
                 var myXhr = $.ajaxSettings.xhr();
                 if (myXhr.upload) {
@@ -93,13 +98,55 @@ $(document).ready(function(){
                 console.log(error);
             },
             async: true,
-            data: formData,
             cache: false,
             contentType: false,
             processData: false,
             timeout: 60000
         });
-    };
+    };*/
+
+    function insertFile(fileData, callback) {
+        const boundary = '-------314159265358979323846';
+        const delimiter = "\r\n--" + boundary + "\r\n";
+        const close_delim = "\r\n--" + boundary + "--";
+      
+        var reader = new FileReader();
+        reader.readAsBinaryString(fileData);
+        reader.onload = function(e) {
+          var contentType = fileData.type || 'application/octet-stream';
+          var metadata = {
+            'title': fileData.fileName,
+            'mimeType': contentType
+          };
+      
+          var base64Data = btoa(reader.result);
+          var multipartRequestBody =
+              delimiter +
+              'Content-Type: application/json\r\n\r\n' +
+              JSON.stringify(metadata) +
+              delimiter +
+              'Content-Type: ' + contentType + '\r\n' +
+              'Content-Transfer-Encoding: base64\r\n' +
+              '\r\n' +
+              base64Data +
+              close_delim;
+      
+          var request = gapi.client.request({
+              'path': '/upload/drive/v2/files',
+              'method': 'POST',
+              'params': {'uploadType': 'multipart'},
+              'headers': {
+                'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
+              },
+              'body': multipartRequestBody});
+          if (!callback) {
+            callback = function(file) {
+              console.log(file)
+            };
+          }
+          request.execute(callback);
+        }
+}
     
     Upload.prototype.progressHandling = function (event) {
         var percent = 0;
@@ -117,11 +164,13 @@ $(document).ready(function(){
     $("#upload").on("click", function (e) {
         var file = $("#files")[0].files[0];
         var upload = new Upload(file);
+
+        insertFile(file);
     
         // maby check size or type here with upload.getSize() and upload.getType()
     
         // execute upload
-        upload.doUpload();
+        //upload.doUpload();
     });
 
 
