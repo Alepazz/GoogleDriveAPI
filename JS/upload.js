@@ -28,7 +28,7 @@ $(document).ready(function(){
         success: function(resultData) { /*resultData is a Json Array with the following fields (search for line
             *"A successful response to this request contains the following fields in a JSON array" in this link: https://developers.google.com/identity/protocols/OpenIDConnect)
             */
-            console.log(resultData);
+            console.log("resultData", resultData);
             localStorage.setItem("accessToken",resultData.access_token); //A token that can be sent to a Google API.
             //localStorage.setItem("refreshToken",resultData.refresh_token); //This field is only present if access_type=offline is included in the authentication request. --> A refresh token provides your app continuous access to Google APIs while the user is not logged into your application. To request a refresh token, add access_type=offline to the authentication request.
             //console.log("token type", resultData.token_type);
@@ -37,37 +37,35 @@ $(document).ready(function(){
         }
     });
 
-    var Upload = function (file) {
+   var Upload = function (file) {
         this.file = file;
     };
 
-    //Upload.prototype.newProperty è utile per far ereditare newProperty ai figli (oggetti costruiti a partire dal costruttore Upload)
     Upload.prototype.getName = function() {
         return this.file.name;
     };
     
     Upload.prototype.doUpload = function () {
-        var that = this;
+        var that = this; //that.file is the file object
         var formData = new FormData(); //key-value map
     
         // add assoc key values, this will be posts values
-        formData.append("file", this.file, "prova.txt"); //insert in "file" all the metadata about the file
-        //console.log(formData.get("file").name); print the file name
-        //formData.append("upload_file", true);
-        console.log(this.file.name);
-        
+        //formData.append("file", this.file); //insert in "file" all the metadata about the file
+        //formData.append('file', that.file, "prova.txt"); //modify the originalFilename
+        //formData.append('file', that.file, "prova.txt");
+
         $.ajax({
             type: "POST",
             enctype: 'multipart/form-data',
             beforeSend: function(request) {
                 request.setRequestHeader("Authorization", "Bearer" + " " + localStorage.getItem("accessToken"));
-                //request.setRequestHeader("Content-Type", "multipart/related; boundary=foo_bar_baz");
                 
             },
             url: "https://www.googleapis.com/upload/drive/v2/files",
-            data: formData,
+            data: {
+                "name": "prova.txt"
+            },
             async: true,
-            //data: formData,
             cache: false,
             contentType: false,
             processData: false,
@@ -88,7 +86,7 @@ $(document).ready(function(){
         });
     };
 
-  /* function insertFile(fileData, callback) {
+   /*function insertFile(fileData, callback) {
         const boundary = '-------314159265358979323846';
         const delimiter = "\r\n--" + boundary + "\r\n";
         const close_delim = "\r\n--" + boundary + "--";
@@ -146,13 +144,14 @@ $(document).ready(function(){
 
     $("#upload").on("click", function (e) {
         var file = $("#files")[0].files[0];
+        console.log(file);
         var upload = new Upload(file);
 
-        //insertFile(file);
+        //insertFile(file, prova);
     
         // maby check size or type here with upload.getSize() and upload.getType()
     
-        // execute upload
+        //execute upload
         upload.doUpload();
     });
 
