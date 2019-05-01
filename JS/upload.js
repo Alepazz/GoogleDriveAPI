@@ -45,26 +45,23 @@ $(document).ready(function(){
         return this.file.name;
     };
     
-    Upload.prototype.doUpload = function () {
+   /* Upload.prototype.doInsert = function () {
         var that = this; //that.file is the file object
         var formData = new FormData(); //key-value map
     
         // add assoc key values, this will be posts values
         //formData.append("file", this.file); //insert in "file" all the metadata about the file
-        //formData.append('file', that.file, "prova.txt"); //modify the originalFilename
+        formData.append('file', that.file, "prova.txt"); //modify the originalFilename
         //formData.append('file', that.file, "prova.txt");
 
         $.ajax({
             type: "POST",
-            enctype: 'multipart/form-data',
             beforeSend: function(request) {
                 request.setRequestHeader("Authorization", "Bearer" + " " + localStorage.getItem("accessToken"));
                 
             },
             url: "https://www.googleapis.com/upload/drive/v2/files",
-            data: {
-                "name": "prova.txt"
-            },
+            data: formData,
             async: true,
             cache: false,
             contentType: false,
@@ -79,14 +76,45 @@ $(document).ready(function(){
             },
             success: function (data) {
                 console.log(data);
+                localStorage.setItem("accessToken", data.access_token);
+                localStorage.setItem("idOfResponse", data.id);
+                executeUpdate();
             },
             error: function (error) {
                 console.log(error);
             }        
         });
+    };*/
+
+    Upload.prototype.progressHandling = function (event) {
+        var percent = 0;
+        var position = event.loaded || event.position;
+        var total = event.total;
+        var progress_bar_id = "#progress-wrp";
+        if (event.lengthComputable) {
+            percent = Math.ceil(position / total * 100);
+        }
+        // update progressbars classes so it fits your code
+        $(progress_bar_id + " .progress-bar").css("width", +percent + "%");
+        $(progress_bar_id + " .status").text(percent + "%");
     };
 
-   /*function insertFile(fileData, callback) {
+    $("#upload").on("click", function (e) {
+        var file = $("#files")[0].files[0];
+        //var upload = new Upload(file);
+        var prova = "";
+
+        insertFile(file, prova);
+    
+        // maby check size or type here with upload.getSize() and upload.getType()
+    
+        //execute upload
+        //upload.doInsert();
+    });
+  
+});
+
+/*function insertFile(fileData, callback) {
         const boundary = '-------314159265358979323846';
         const delimiter = "\r\n--" + boundary + "\r\n";
         const close_delim = "\r\n--" + boundary + "--";
@@ -128,34 +156,3 @@ $(document).ready(function(){
             request.execute(callback);
         }
     }*/
-    
-    Upload.prototype.progressHandling = function (event) {
-        var percent = 0;
-        var position = event.loaded || event.position;
-        var total = event.total;
-        var progress_bar_id = "#progress-wrp";
-        if (event.lengthComputable) {
-            percent = Math.ceil(position / total * 100);
-        }
-        // update progressbars classes so it fits your code
-        $(progress_bar_id + " .progress-bar").css("width", +percent + "%");
-        $(progress_bar_id + " .status").text(percent + "%");
-    };
-
-    $("#upload").on("click", function (e) {
-        var file = $("#files")[0].files[0];
-        console.log(file);
-        var upload = new Upload(file);
-
-        //insertFile(file, prova);
-    
-        // maby check size or type here with upload.getSize() and upload.getType()
-    
-        //execute upload
-        upload.doUpload();
-    });
-
-
-
-    
-});
