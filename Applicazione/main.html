@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+<!-- link -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<!--<link rel="stylesheet" type="text/css" href="Css/Util.css">-->
+
+<!-- script -->
+<script src="https://apis.google.com/js/api.js"></script>
+<link rel="stylesheet" href="Script/jquery.datetimepicker.min.css">
+<script src="Script/jquery.js"></script>
+<script src="Script/jquery.datetimepicker.full.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://apis.google.com/js/api.js"></script>
+
+<!-- meta --> <!-- content="YOUR_CLIENT_ID"-->
+<meta name="google-signin-scope" content="profile email">
+<meta name="google-signin-client_id" content="86585982831-q7fl3eoq1qi7jng8bj2os0a1461laqko.apps.googleusercontent.com">
+
+<script type ="text/javascript" src = "Js/Util.js" ></script>
+<script src="https://apis.google.com/js/platform.js" async defer></script>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="mx-auto" style="width: 300px;">
+            Interaction with Google Drive
+        </div>
+</nav>
+    
+    <button onclick="authenticate()">authorize and load</button>
+
+    <!--<button onclick="authenticate()" style="background-color: #bdc3c7">Load Calendar's informations</button>-->
+
+    <!--<div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></div>-->
+
+    <a href="#" onclick="signOut();">Sign out</a>
+
+
+    <div>
+            <input id="files" type="file" name="files[]" multiple/>
+            <button id="upload">Upload</button>
+            <div id="progress-wrp">
+                <div class="progress-bar"></div>
+                <div class="status">0%</div>
+            </div>
+        </div> 
+       <div id="result">
+</body>
+</html>
