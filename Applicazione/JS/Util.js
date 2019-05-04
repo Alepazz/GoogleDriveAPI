@@ -39,6 +39,19 @@ var Upload = function (file) {
     this.file = file;
 };
 
+Upload.prototype.progressHandling = function (event) {
+    var percent = 0;
+    var position = event.loaded || event.position;
+    var total = event.total;
+    var progress_bar_id = "#progress-wrp";
+    if (event.lengthComputable) {
+        percent = Math.ceil(position / total * 100);
+    }
+    // update progressbars classes so it fits your code
+    $(progress_bar_id + " .progress-bar").css("width", +percent + "%");
+    $(progress_bar_id + " .status").text(percent + "%");
+};
+
 Upload.prototype.doInsert = function () {
 
     const boundary = '-------314159265358979323846';
@@ -101,13 +114,22 @@ Upload.prototype.doInsert = function () {
 /* -------------------------- */
 $(document).ready(function(){
     $("#upload").on("click", function (e) {
-        var file = $("#files")[0].files[0];
-        var upload = new Upload(file);
+        //var file = $("#files")[0].files[0];
+        //var upload = new Upload(file);
 
-        console.log("file property", file);
+        //console.log("file property", file);
+        var i = 0;
+        while(typeof($("#files")[0].files[i]) != "undefined"){
+            console.log("file " + i, $("#files")[0].files[i]);
+            var file = $("#files")[0].files[i];
+            var upload = new Upload(file);
+            i += 1;
+            upload.doInsert();
+        }
         
-        upload.doInsert();
+        //upload.doInsert();
     });
+
 });
 
 /* -------------------------- */
