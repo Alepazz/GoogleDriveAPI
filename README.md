@@ -12,5 +12,5 @@ Funzionamento:
 5. Attendere il completamento
 
 NOTA: ci sono due file .js: 
-1 - Util.js contiene il file js inerente il caricamento di uno o più file su drive, tramite $.ajax;
-2 - Il file Util1.js contiene il caricamento di un file all'interno di una cartella su drive (la cartella sul drive può anche non esistere. Se esiste è necessario specificare l'Id della cartella per destinare il file a quella specifica cartella), tramite l'utilizzo delle API fornite da Google
+1. Util.js contiene il file js inerente il caricamento di uno o più file su drive, tramite $.ajax;
+2. Il file Util1.js contiene il caricamento di un file all'interno di una cartella su drive (la cartella sul drive può anche non esistere. Se esiste è necessario specificare l'Id della cartella per destinare il file a quella specifica cartella), tramite l'utilizzo delle API fornite da Google
