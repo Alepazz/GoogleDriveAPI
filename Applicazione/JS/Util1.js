@@ -16,7 +16,7 @@ function onSignIn(googleUser) {
   /* -------------------------- */
   //Alternativa
   gapi.load("client:auth2", function() {
-    gapi.auth2.init({client_id: "86585982831-q7fl3eoq1qi7jng8bj2os0a1461laqko.apps.googleusercontent.com"}).then(function(){
+    gapi.auth2.init({client_id: "CLIENT_ID"}).then(function(){
       gapi.client.load("https://content.googleapis.com/discovery/v1/apis/drive/v2/rest")
       .then(function() { console.log("GAPI client loaded for API");},
           function(err) { console.error("Error loading GAPI client for API", err); });
@@ -41,7 +41,7 @@ function onSignIn(googleUser) {
  * @param {File} fileData File object to read data from.
  * @param {Function} callback Function to call when the request is complete.
  */
-function insertFile(fileData, callback) {
+function insertFile(fileData, folderId, callback) {
     const boundary = '-------314159265358979323846';
     const delimiter = "\r\n--" + boundary + "\r\n";
     const close_delim = "\r\n--" + boundary + "--";
@@ -52,7 +52,12 @@ function insertFile(fileData, callback) {
       var contentType = fileData.type || 'application/octet-stream';
       var metadata = {
         'title': fileData.name,
-        'mimeType': contentType
+        'mimeType': contentType,
+        "parents": [
+          {
+            "id": folderId
+          }
+        ]
       };
   
       var base64Data = btoa(reader.result);
@@ -77,7 +82,7 @@ function insertFile(fileData, callback) {
           'body': multipartRequestBody});
       if (!callback) {
         callback = function(file) {
-          console.log(file)
+          console.log("Richiesta completata con successo", file)
         };
       }
       request.execute(callback);
@@ -85,7 +90,7 @@ function insertFile(fileData, callback) {
   }
 
   function callbackFunction(){
-      console.log("Richiesta completata");
+      console.log("File caricato con successo");
   }
 
 /* -------------------------- */
@@ -93,9 +98,26 @@ $(document).ready(function(){
     $("#upload").on("click", function (e) {
         var file = $("#files")[0].files[0];
 
-        insertFile(file, callbackFunction());
+        createFolder("CartellaUtente1", file);
+        
     });
 
 });
 
 /* -------------------------- */
+
+function createFolder(folderName, file) {
+  var body = {
+    'title': folderName,
+    'mimeType': "application/vnd.google-apps.folder"
+  };
+
+  var request = gapi.client.drive.files.insert({
+    'resource': body
+  });
+
+  request.execute(function(resp) {
+    console.log('Folder ID: ' + resp.id);
+    insertFile(file, resp.id, callbackFunction());
+  });
+}

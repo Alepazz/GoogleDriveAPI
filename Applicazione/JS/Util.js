@@ -16,7 +16,7 @@ function onSignIn(googleUser) {
   /* -------------------------- */
   //Alternativa
   gapi.load("client:auth2", function() {
-    gapi.auth2.init({client_id: "86585982831-q7fl3eoq1qi7jng8bj2os0a1461laqko.apps.googleusercontent.com"}).then(function(){
+    gapi.auth2.init({client_id: "CLIENT_ID"}).then(function(){
       gapi.client.load("https://content.googleapis.com/discovery/v1/apis/drive/v2/rest")
       .then(function() { console.log("GAPI client loaded for API");},
           function(err) { console.error("Error loading GAPI client for API", err); });
